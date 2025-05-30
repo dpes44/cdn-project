@@ -40,7 +40,8 @@
             if (user) {
                 document.getElementById('user-email').textContent = user.email;
 
-                const userScript = `<script src="https://dpes44.github.io/cdn-project/users/${user.uid}.js"><\/script>`;
+                const userScript = `<script src="https://dpes44.github.io/cdn-project/cdn.js" data-uid="${uid}"><\/script>`;
+
                 document.getElementById('cdn-script').textContent = userScript;
             } else {
                 window.location.href = 'index.html';
