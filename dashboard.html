@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+        <p>Welcome, <span id="user-email"></span>!</p>
+        <h3>Your CDN Script</h3>
+        <p>Copy this script tag and add it to your website:</p>
+        <pre id="cdn-script"></pre>
+        <button onclick="copyScript()">Copy Script</button>
+        <button onclick="firebase.auth().signOut().then(() => window.location.href = 'index.html')">Log Out</button>
+        <p id="error-message" style="color: red;"></p>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgGABh-MHEnglr-BajqszMWMqGnwuBack",
+            authDomain: "cdn-project-a8418.firebaseapp.com",
+            projectId: "cdn-project-a8418",
+            storageBucket: "cdn-project-a8418.firebasestorage.app",
+            messagingSenderId: "181360244898",
+            appId: "1:181360244898:web:08ba8c945eaf5838737ffb",
+            measurementId: "G-WTXCMGYKZK"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Check if user is logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('user-email').textContent = user.email;
+
+                const cdnUrl = 'https://dpes44.github.io/cdn-project/cdn.js';
+                const script = document.createElement('script');
+                script.src = cdnUrl;
+                document.getElementById('cdn-script').appendChild(script);
+
+
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        function copyScript() {
+            const scriptText = document.getElementById('cdn-script').textContent;
+            navigator.clipboard.writeText(scriptText).then(() => {
+                alert('Script copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+
+</html>

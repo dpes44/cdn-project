@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Sign Up</h1>
+        <form id="signup-form">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="dashboard.html">Log in</a></p>
+        <p id="error-message" style="color: red;"></p>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgGABh-MHEnglr-BajqszMWMqGnwuBack",
+            authDomain: "cdn-project-a8418.firebaseapp.com",
+            projectId: "cdn-project-a8418",
+            storageBucket: "cdn-project-a8418.firebasestorage.app",
+            messagingSenderId: "181360244898",
+            appId: "1:181360244898:web:08ba8c945eaf5838737ffb",
+            measurementId: "G-WTXCMGYKZK"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        document.getElementById('signup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Save user data to Firestore
+                    db.collection('users').doc(userCredential.user.uid).set({
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        window.location.href = 'dashboard.html';
+                    });
+                })
+                .catch((error) => {
+                    document.getElementById('error-message').textContent = error.message;
+                });
+        });
+    </script>
+</body>
+
+</html>
