@@ -15,14 +15,14 @@
         <h3>Your CDN Script</h3>
         <p>Copy this script tag and add it to your website:</p>
         <pre id="cdn-script"></pre>
-        <button onclick="copyScript()">Copy Script</button>
-        <button onclick="firebase.auth().signOut().then(() => window.location.href = 'index.html')">Log Out</button>
+        <button class = "copyButton">Copy Script</button>
+        <button id="logout-button">Log Out</button>
         <p id="error-message" style="color: red;"></p>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
-    <script>
-        // Initialize Firebase
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAgGABh-MHEnglr-BajqszMWMqGnwuBack",
             authDomain: "cdn-project-a8418.firebaseapp.com",
@@ -33,22 +33,27 @@
             measurementId: "G-WTXCMGYKZK"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-        // Check if user is logged in
-        auth.onAuthStateChanged((user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('user-email').textContent = user.email;
-
-                const cdnUrl = 'https://dpes44.github.io/cdn-project/cdn.js';
-                const script = document.createElement('script');
-                script.src = cdnUrl;
-                document.getElementById('cdn-script').appendChild(script);
-
-
+                document.getElementById('cdn-script').textContent = `<script src="https://dpes44.github.io/cdn-project/cdn.js"><\/script>`;
             } else {
                 window.location.href = 'index.html';
+            }
+        });
+
+
+
+
+        document.getElementById('logout-button').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                document.getElementById('error-message').textContent = error.message;
             }
         });
 
@@ -56,8 +61,20 @@
             const scriptText = document.getElementById('cdn-script').textContent;
             navigator.clipboard.writeText(scriptText).then(() => {
                 alert('Script copied to clipboard!');
+            }).catch((error) => {
+                document.getElementById('error-message').textContent = 'Failed to copy script: ' + error.message;
             });
         }
+
+        document.querySelector('.copyButton').addEventListener('click', () => {
+            const scriptText = document.getElementById('cdn-script').textContent;
+            navigator.clipboard.writeText(scriptText).then(() => {
+                alert('Script copied to clipboard!');
+            }).catch((error) => {
+                document.getElementById('error-message').textContent = 'Failed to copy script: ' + error.message;
+            });
+        });
+
     </script>
 </body>
 
