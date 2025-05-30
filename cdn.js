@@ -1,39 +1,39 @@
-// (function () {
-//   // Check if the cdn-root div exists
-//   const root = document.getElementById("cdn-root");
-//   if (root) {
-//     // Create a div with some content
-//     const content = document.createElement("div");
-//     content.style.backgroundColor = "#e0f7fa";
-//     content.style.padding = "20px";
-//     content.style.borderRadius = "8px";
-//     content.style.textAlign = "center";
-//     content.innerHTML =
-//       "<h3>Welcome to the CDN Widget!</h3><p>This is a sample div rendered by the CDN script.</p>";
-//     root.appendChild(content);
-//   } else {
-//     console.error('CDN Error: No element with id="cdn-root" found.');
-//   }
-// })();
-
 (function () {
-  const root = document.getElementById("cdn-root");
-  const uid = root?.getAttribute("data-user");
-  if (!root || !uid) {
-    console.error("CDN Error: Missing root element or user ID.");
+  const scripts = document.getElementsByTagName('script');
+  const thisScript = scripts[scripts.length - 1];
+  const uid = thisScript.getAttribute('data-uid');
+  const root = document.getElementById('cdn-root');
+
+  if (!root) {
+    console.error('CDN Error: No element with id="cdn-root" found.');
     return;
   }
 
-  fetch(`https://your-api.com/user-content/${uid}`)
-    .then((res) => res.text())
-    .then((html) => {
-      const content = document.createElement("div");
-      content.style.backgroundColor = "#e0f7fa";
-      content.style.padding = "20px";
-      content.style.borderRadius = "8px";
-      content.style.textAlign = "center";
-      content.innerHTML =
-        "<h3>Welcome to the CDN Widget!</h3><p>This is a sample div rendered by the CDN script.</p>";
-      root.appendChild(content);
+  if (!uid) {
+    root.innerHTML = '<p style="color: red;">CDN Error: Missing user ID (data-uid) in script tag.</p>';
+    return;
+  }
+
+  fetch(`https://dpes44.github.io/cdn-project/user-data/${uid}.json`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`User data not found for UID: ${uid}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      const container = document.createElement('div');
+      container.style.backgroundColor = '#e0f7fa';
+      container.style.padding = '20px';
+      container.style.borderRadius = '8px';
+      container.style.textAlign = 'center';
+      container.innerHTML = `
+        <h3>${data.title || 'Welcome!'}</h3>
+        <p>${data.message || 'This is your personalized CDN widget.'}</p>
+      `;
+      root.appendChild(container);
+    })
+    .catch(error => {
+      root.innerHTML = `<p style="color: red;">CDN Error: ${error.message}</p>`;
     });
 })();
