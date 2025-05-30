@@ -15,7 +15,7 @@
         <h3>Your CDN Script</h3>
         <p>Copy this script tag and add it to your website:</p>
         <pre id="cdn-script"></pre>
-        <button class = "copyButton">Copy Script</button>
+        <button class="copyButton">Copy Script</button>
         <button id="logout-button">Log Out</button>
         <p id="error-message" style="color: red;"></p>
     </div>
@@ -39,14 +39,13 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('user-email').textContent = user.email;
-                document.getElementById('cdn-script').textContent = `<script src="https://dpes44.github.io/cdn-project/cdn.js"><\/script>`;
+
+                const userScript = `<script src="https://dpes44.github.io/cdn-project/users/${user.uid}.js"><\/script>`;
+                document.getElementById('cdn-script').textContent = userScript;
             } else {
                 window.location.href = 'index.html';
             }
         });
-
-
-
 
         document.getElementById('logout-button').addEventListener('click', async () => {
             try {
